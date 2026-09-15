@@ -1,11 +1,32 @@
-import http from "node: http";
+import http from 'node:http'
+import { readFile } from 'node:fs'
 
-const server = http.createsServer((req, res) => {
-    res.writeHead(200, {"Content-type" : "application/json"});
+const server = http.createServer((req , res) => {
+    if(req.url === '/' && req.method === 'GET'){
+        readFile('./index.html', (err, data) => {
+            if (err) {
+                res.statusCode = 500;
+                res.end("Error reading index.html");
+                return;
+            }
 
-    res.end(JSON.stringify({message: "welcome to server"}));
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "text/html");
+            res.end(data)
+        })
+    }else if(req.url === '/about.html' && req.method === 'GET'){
+        readFile('./about.html', (err, data) => {
+            if(err){
+                 res.statusCode = 500;
+                res.end("Error reading index.html");
+                return;
+            }
 
-    server.listen(8080, () => {  
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "text/html");
+            res.end(data)
+        })
+    }
+});
 
-    })
-})
+server.listen(8080);
